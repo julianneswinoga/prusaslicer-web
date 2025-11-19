@@ -1,5 +1,8 @@
 FROM ubuntu:24.04 AS build_step
 
+ARG Z3_VERSION=4.8.12
+ARG PRUSASLICER_VERSION=version_2.9.4
+
 ENV DEBIAN_FRONTEND=noninteractive
 RUN bash <<'EOF'
 set -eu
@@ -51,7 +54,7 @@ WORKDIR /z3
 RUN <<'EOF'
 set -eu
 
-tarball_url=$(curl --show-error --silent --location https://api.github.com/repos/Z3Prover/z3/releases/tags/z3-4.8.12 | jq -r '.tarball_url')
+tarball_url=$(curl --show-error --silent --location https://api.github.com/repos/Z3Prover/z3/releases/tags/z3-${Z3_VERSION} | jq -r '.tarball_url')
 echo "Downloading from $tarball_url"
 curl --show-error --silent --location "$tarball_url" | tar xvzf - -C . --strip-components=1
 EOF
@@ -69,7 +72,7 @@ WORKDIR /slic3r
 RUN <<'EOF'
 set -eu
 
-tarball_url=$(curl --show-error --silent --location https://api.github.com/repos/prusa3d/PrusaSlicer/releases/tags/version_2.9.4 | jq -r '.tarball_url')
+tarball_url=$(curl --show-error --silent --location https://api.github.com/repos/prusa3d/PrusaSlicer/releases/tags/${PRUSASLICER_VERSION} | jq -r '.tarball_url')
 echo "Downloading from $tarball_url"
 curl --show-error --silent --location "$tarball_url" | tar xvzf - -C . --strip-components=1
 EOF
