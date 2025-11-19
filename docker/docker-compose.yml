@@ -1,3 +1,10 @@
 services:
   prusaslicer-base:
-     build: prusaslicer-base/
+    build: prusaslicer-base/
+  prusaslicer-web:
+    build:
+       context: prusaslicer-web/
+       additional_contexts:
+         prusaslicer_base: "service:prusaslicer-base"
+    ports:
+      - 8077:8080
