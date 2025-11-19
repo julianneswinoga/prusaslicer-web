@@ -1,0 +1,12 @@
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-24.04'
+    steps:
+      - name: Build and push
+        uses: docker/bake-action@v6
+        with:
+          source: "{{defaultContext}}:docker/"
+          push: false
