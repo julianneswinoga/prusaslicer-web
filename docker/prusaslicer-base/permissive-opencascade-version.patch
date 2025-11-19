@@ -1,0 +1,18 @@
+diff --git a/src/occt_wrapper/CMakeLists.txt b/src/occt_wrapper/CMakeLists.txt
+index f6df6e7a605..322fef0b21d 100644
+--- a/src/occt_wrapper/CMakeLists.txt
++++ b/src/occt_wrapper/CMakeLists.txt
+@@ -19,7 +19,12 @@ include(GenerateExportHeader)
+ 
+ generate_export_header(OCCTWrapper)
+ 
+-find_package(OpenCASCADE 7.6.1 REQUIRED)
++# OpenCASCADE's cmake file is broken and doesn't expose it's version correctly (only matches an exact version)
++find_package(OpenCASCADE REQUIRED)
++if (OpenCASCADE_VERSION VERSION_LESS "7.6" OR
++    OpenCASCADE_VERSION VERSION_GREATER_EQUAL "7.7")
++    message(FATAL_ERROR "Need OpenCASCADE 7.6.x (found ${OpenCASCADE_VERSION})")
++endif()
+ 
+ set(OCCT_LIBS
+     TKXDESTEP

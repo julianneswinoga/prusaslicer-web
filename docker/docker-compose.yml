@@ -1,0 +1,3 @@
+services:
+  prusaslicer-base:
+     build: prusaslicer-base/
