@@ -1,6 +1,8 @@
 name: build-and-release
 on:
   push:
+    branches-ignore:
+      - 'autoupdate/*'
   pull_request:
     branches:
       - '*'
