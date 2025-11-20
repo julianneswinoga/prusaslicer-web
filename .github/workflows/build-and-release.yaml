@@ -8,7 +8,11 @@ jobs:
     env:
       PRUSASLICER_VERSION: '2.9.4'
     steps:
+      - name: Set IS_TAG
+        run: echo "IS_TAG=${{ startsWith(github.ref, 'refs/tags/') == 'true' }}" >> $GITHUB_ENV
+
       - name: Log in to Docker Hub
+        if: ${{ env.IS_TAG == 'true' }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -21,14 +25,16 @@ jobs:
           install: true
 
       # Use bake since it can read a docker-compose.yml
-      - name: Build and push
+      - name: Build and maybe push
         uses: docker/bake-action@v6
         with:
           source: "{{defaultContext}}:docker/"
           load: true
-          push: true
+          push: ${{ env.IS_TAG == 'true' }}
+          # https://old.reddit.com/r/devops/comments/1ejb7ed/github_actions_doesnt_seem_to_be_using_docker/lgfskeu/
           set: |
-            *.cache-from=type=gha
-            *.cache-to=type=gha,mode=max
+            *.cache-from=type=gha,version=2,url_v2=${{ env.ACTIONS_RESULTS_URL }},token=${{ env.ACTIONS_RUNTIME_TOKEN }},ACTIONS_RUNTIME_TOKEN=${{ secrets.GITHUB_TOKEN }}
+            *.cache-to=type=gha,mode=max,version=2,url_v2=${{ env.ACTIONS_RESULTS_URL }},token=${{ env.ACTIONS_RUNTIME_TOKEN }},ACTIONS_RUNTIME_TOKEN=${{ secrets.GITHUB_TOKEN }}
+            
             prusaslicer-base.args.PRUSASLICER_TAG=version_${{ env.PRUSASLICER_VERSION }}
             *.tags=julianneswinoga/prusaslicer-web:${{ env.PRUSASLICER_VERSION }}
