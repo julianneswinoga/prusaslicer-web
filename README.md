@@ -1,4 +1,5 @@
 # Web-based (VNC) PrusaSlicer
+[![DockerHub Pulls](https://img.shields.io/docker/pulls/julianneswinoga/prusaslicer-web)](https://hub.docker.com/r/julianneswinoga/prusaslicer-web)
 
 ![](./images/screenshot.png)
 
