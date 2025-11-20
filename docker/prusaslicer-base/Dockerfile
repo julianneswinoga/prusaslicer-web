@@ -74,6 +74,7 @@ RUN <<'EOF'
 set -eu
 
 cmake -S . -B build --preset shareddeps \
+    -DCMAKE_INSTALL_PREFIX=/opt/PrusaSlicer \
     -DSLIC3R_BUILD_TESTS=no \
     -DOPENVDB_FIND_MODULE_PATH=/usr/lib/x86_64-linux-gnu/cmake/OpenVDB/
 cmake --build build -j$(nproc)
@@ -82,7 +83,8 @@ EOF
 
 # Final image
 FROM ubuntu:$UBUNTU_VERSION
-COPY --from=build_step /usr/local /usr/local
+COPY --from=build_step /opt /opt
+ENV PATH=${PATH}:/opt/PrusaSlicer/bin
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN bash <<'EOF'
