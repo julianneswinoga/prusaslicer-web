@@ -1,15 +1,18 @@
 #!/bin/bash
 set -eu
 
+echo "Starting entrypoint script, env=
+$(env)"
+
 export VNC_PORT=${VNC_PORT:-5900}
 
 # turbovnc options
 export DISPLAY=${DISPLAY:-:0}
 export VNC_RESOLUTION=${VNC_RESOLUTION:-1280x800}
 if [ -n "${VNC_PASSWORD:-}" ]; then
-  mkdir -p /root/.vnc
-  echo "$VNC_PASSWORD" | vncpasswd -f > /root/.vnc/passwd
-  chmod 0600 /root/.vnc/passwd
+  mkdir -p "/$HOME/.vnc"
+  echo "$VNC_PASSWORD" | vncpasswd -f > "/$HOME/.vnc/passwd"
+  chmod 0600 "/$HOME/.vnc/passwd"
   export VNC_SEC=
 else
   export VNC_SEC='-securitytypes TLSNone,X509None,None'
@@ -31,4 +34,5 @@ else
 fi
 
 export SUPD_LOGLEVEL="${SUPD_LOGLEVEL:-TRACE}"
-exec gosu slic3r supervisord -e "$SUPD_LOGLEVEL"
+echo 'Finished entrypoint script, starting supervisord'
+exec supervisord -e "$SUPD_LOGLEVEL"

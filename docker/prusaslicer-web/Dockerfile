@@ -33,28 +33,6 @@ dpkg -i /tmp/turbovnc_${TURBOVNC_VERSION}_amd64.deb
 rm -rf /tmp/*.deb
 EOF
 
-# User setup
-RUN bash <<'EOF'
-set -eu
-
-adduser --disabled-password --quiet --comment '' slic3r
-groupadd render  # For intel GPUs
-usermod -aG video,render slic3r
-
-mkdir /prints/
-mkdir -p /configs/.local/
-mkdir -p /configs/.config/
-ln -s /configs/.config/ /home/slic3r/
-
-mkdir -p /home/slic3r/.config/gtk-3.0/
-echo "file:///prints
-file:///configs" > /home/slic3r/.config/gtk-3.0/bookmarks
-
-chown -R slic3r:slic3r /home/slic3r/ /prints/ /configs/
-
-locale-gen en_US
-EOF
-
 # Generate key for noVNC
 RUN bash <<'EOF'
 set -eu
@@ -73,7 +51,6 @@ set -eu
 
 mkdir -p /var/log/supervisord
 touch /var/log/supervisord.log
-chown slic3r:slic3r /var/log/supervisord /var/log/supervisord.log
 EOF
 
 # Add a default file to resize and redirect, and adjust icons for noVNC.
@@ -91,6 +68,37 @@ ADD icons/prusaslicer-120x120.png /usr/share/novnc/app/images/icons/novnc-120x12
 ADD icons/prusaslicer-144x144.png /usr/share/novnc/app/images/icons/novnc-144x144.png
 ADD icons/prusaslicer-152x152.png /usr/share/novnc/app/images/icons/novnc-152x152.png
 ADD icons/prusaslicer-192x192.png /usr/share/novnc/app/images/icons/novnc-192x192.png
+
+
+# User setup
+RUN bash <<'EOF'
+set -eu
+
+adduser --disabled-password --quiet --comment '' slic3r
+groupadd render  # For intel GPUs
+usermod -aG video,render slic3r
+
+mkdir /prints/
+mkdir -p /configs/.local/
+mkdir -p /configs/.config/
+ln -s /configs/.config/ /home/slic3r/
+
+echo "XDG_DOWNLOAD_DIR=\"/prints/\"" >> /home/slic3r/.config/user-dirs.dirs
+mkdir -p /home/slic3r/.config/gtk-3.0/
+echo "file:///prints
+file:///configs" > /home/slic3r/.config/gtk-3.0/bookmarks
+
+chown -R slic3r:slic3r \
+  /home/slic3r/ \
+  /prints/ \
+  /configs/ \
+  /var/log/supervisord/ \
+  /var/log/supervisord.log
+
+locale-gen en_US
+EOF
+
+USER slic3r
 
 VOLUME /configs/
 VOLUME /prints/
