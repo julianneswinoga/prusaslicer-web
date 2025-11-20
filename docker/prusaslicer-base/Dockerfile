@@ -30,9 +30,8 @@ build_deps=(
     # ./src/slic3r/CMakeLists.txt
     libssl-dev libwebkit2gtk-4.1-dev
     # ./src/libseqarrange/CMakeLists.txt
-    # libz3-dev - broken on 24.04, see below
-    # z3 source dependencies
-    python3-distutils-extra
+    # libz3-dev is still sorta broken on 24.04, see below
+    libz3-dev
 )
 
 apt-get update
@@ -49,25 +48,11 @@ ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
     LC_ALL=en_US.UTF-8
 
-# Need to build z3 from source
+# Need to patch in z3 Cmake config
 # 24.04 ships with a broken install, Z3Config.cmake isn't found
-# Required from src/libseqarrange/CMakeLists.txt
-WORKDIR /z3
-RUN <<'EOF'
-set -eu
-
-tarball_url=$(curl --show-error --silent --location https://api.github.com/repos/Z3Prover/z3/releases/tags/${Z3_TAG} | jq -r '.tarball_url')
-echo "Downloading from $tarball_url"
-curl --show-error --silent --location "$tarball_url" | tar xvzf - -C . --strip-components=1
-EOF
-RUN <<'EOF'
-set -eu
-
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build -j$(nproc)
-cmake --install build
-ldconfig
-EOF
+# https://github.com/Z3Prover/z3/issues/6496
+# https://salsa.debian.org/pkg-llvm-team/z3/-/blob/master/debian/not-installed
+ADD Z3Config.cmake /usr/lib/x86_64-linux-gnu/cmake/Z3/
 
 # Download source
 WORKDIR /slic3r
@@ -105,7 +90,7 @@ set -eu
 
 apt-get update
 apt-get install -y --no-install-recommends \
-    libboost-all-dev libqhullcpp8.0 libopenvdb-tools libnlopt0 libglew2.2 libcurl4t64 libwxgtk-gl3.2-1t64 libwxgtk-webview3.2-1t64
+    libboost-all-dev libqhullcpp8.0 libopenvdb-tools libnlopt0 libglew2.2 libcurl4t64 libwxgtk-gl3.2-1t64 libwxgtk-webview3.2-1t64 libz3-4
 
 apt-get autoclean -y
 apt-get autoremove -y

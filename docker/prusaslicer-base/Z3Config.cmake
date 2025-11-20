@@ -1,0 +1,16 @@
+get_filename_component(PACKAGE_PREFIX_DIR "/usr/" ABSOLUTE)
+
+set(Z3_VERSION_MAJOR 4)
+set(Z3_VERSION_MINOR 8)
+set(Z3_VERSION_PATCH 12)
+set(Z3_VERSION_TWEAK 0)
+set(Z3_VERSION_STRING "${Z3_VERSION_MAJOR}.${Z3_VERSION_MINOR}.${Z3_VERSION_PATCH}.${Z3_VERSION_TWEAK}")
+
+set(Z3_C_INCLUDE_DIRS ${PACKAGE_PREFIX_DIR}/include )
+set(Z3_CXX_INCLUDE_DIRS  ${Z3_C_INCLUDE_DIRS})
+# List of libraries to link against
+add_library(z3::libz3 SHARED IMPORTED)
+set_target_properties(z3::libz3 PROPERTIES
+    IMPORTED_LOCATION "${PACKAGE_PREFIX_DIR}/lib/x86_64-linux-gnu/libz3.so"
+    INTERFACE_INCLUDE_DIRECTORIES "${PACKAGE_PREFIX_DIR}/include"
+)
