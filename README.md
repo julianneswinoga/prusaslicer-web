@@ -4,7 +4,8 @@
 
 TODO:
 - [ ] Automatic image rebuilds on new upstream Prusa Slicer release
-- [x] GPU passthrough support
+- [x] Intel/AMD GPU passthrough support
+- [ ] NVidia GPU passthrough support
 - [x] VNC password support
 - [ ] Desktop theming
 
