@@ -1,0 +1,55 @@
+name: pr-from-upstream-release
+on:
+  workflow_dispatch:
+#  schedule:
+#    - cron:  '0 4 * * *'  # Every day at 04:00.
+
+jobs:
+  check-upstream-release:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v1
+
+      - name: Read compose PRUSASLICER_TAG
+        run: |
+          cd docker/
+          compose_prusaslicer_tag=$(docker compose config --format=json | jq -r '.services."prusaslicer-base".build.args.PRUSASLICER_TAG')
+          compose_prusaslicer_version=$(echo "$compose_prusaslicer_tag" | sed 's/^version_//')
+          echo "compose_prusaslicer_version=$compose_prusaslicer_version" | tee -a $GITHUB_ENV
+
+      - name: Get latest upstream release tag
+        run: |
+          latest_upstream_tag=$(curl --show-error --silent --location https://api.github.com/repos/prusa3d/PrusaSlicer/releases/latest | jq -r '.tag_name')
+          latest_upstream_version=$(echo "$latest_upstream_tag" | sed 's/^version_//')
+          echo "latest_upstream_version=$latest_upstream_version" | tee -a $GITHUB_ENV
+
+      - name: Check if upstream has released a newer version
+        run: |
+          set -x
+          if dpkg --compare-versions "$latest_upstream_version" 'gt' "$compose_prusaslicer_version"; then
+            echo 'upstream_has_newer_release=true' | tee -a $GITHUB_ENV
+          else
+            echo 'upstream_has_newer_release=false' | tee -a $GITHUB_ENV
+          fi
+
+      - name: Update source code
+        if: ${{ env.upstream_has_newer_release == 'true' }}
+        run: |
+          perl -i -pe 's|\Q${{ env.latest_upstream_version }}\E|${{ env.compose_prusaslicer_version }}|g' docker/docker-compose.yml
+          perl -i -pe 's|\Q${{ env.latest_upstream_version }}\E|${{ env.compose_prusaslicer_version }}|g' docker/prusaslicer-base/Dockerfile
+
+      - name: Create Pull Request
+        if: ${{ env.upstream_has_newer_release == 'true' }}
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: |
+            Automatic update from ${{ env.compose_prusaslicer_version }} to ${{ env.latest_upstream_version }}
+          branch: |
+            autoupdate/${{ env.latest_upstream_version }}
+          title: |
+            Automatic update from ${{ env.compose_prusaslicer_version }} to ${{ env.latest_upstream_version }}
+          body: |
+            Automatic update from ${{ env.compose_prusaslicer_version }} to ${{ env.latest_upstream_version }}

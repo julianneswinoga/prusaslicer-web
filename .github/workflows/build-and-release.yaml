@@ -1,9 +1,13 @@
+name: build-and-release
 on:
   push:
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
   build:
-    runs-on: 'ubuntu-24.04'
+    runs-on: 'ubuntu-latest'
     environment: default_env
     steps:
       - uses: actions/checkout@v5
@@ -20,12 +24,6 @@ jobs:
           compose_prusaslicer_tag=$(docker compose config --format=json | jq -r '.services."prusaslicer-base".build.args.PRUSASLICER_TAG')
           compose_prusaslicer_version=$(echo "$compose_prusaslicer_tag" | sed 's/^version_//')
           echo "compose_prusaslicer_version=$compose_prusaslicer_version" | tee -a $GITHUB_ENV
-
-      - name: Get latest upstream release tag
-        run: |
-          latest_upstream_tag=$(curl --show-error --silent --location https://api.github.com/repos/prusa3d/PrusaSlicer/releases/latest | jq -r '.tag_name')
-          latest_upstream_version=$(echo "$latest_upstream_tag" | sed 's/^version_//')
-          echo "latest_upstream_version=$latest_upstream_version" | tee -a $GITHUB_ENV
 
       - name: Log in to Docker Hub
         if: ${{ env.TAG_NAME != '' }}
