@@ -1,4 +1,5 @@
 # Web-based (VNC) PrusaSlicer
+[![DockerHub Pulls](https://img.shields.io/docker/pulls/julianneswinoga/prusaslicer-web)](https://hub.docker.com/r/julianneswinoga/prusaslicer-web)
 
 ![](./images/screenshot.png)
 
@@ -14,7 +15,7 @@ TODO:
 ```yaml
 services:
     prusaslicer:
-      image: julianneswinoga/prusaslicer-web:2.9.4
+      image: julianneswinoga/prusaslicer-web:latest
       volumes:
         - <host config dir>:/configs
         - <host print dir>:/prints
@@ -24,7 +25,7 @@ services:
 ```yaml
 services:
     prusaslicer:
-      image: julianneswinoga/prusaslicer-web:2.9.4
+      image: julianneswinoga/prusaslicer-web:latest
       environment:
         - ENABLEHWGPU=true
         - VGL_DISPLAY=/dev/dri/card1  # You might need to play around with card0, card1, etc
@@ -40,7 +41,7 @@ services:
 ```yaml
 services:
     prusaslicer:
-      image: julianneswinoga/prusaslicer-web:2.9.4
+      image: julianneswinoga/prusaslicer-web:latest
       environment:
         - ENABLEHWGPU=true
         - VGL_DISPLAY=/dev/dri/card1  # You might need to play around with card0, card1, etc

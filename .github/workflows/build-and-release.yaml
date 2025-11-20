@@ -50,12 +50,15 @@ jobs:
           load: true
           push: ${{ env.TAG_NAME != '' }}
           # https://old.reddit.com/r/devops/comments/1ejb7ed/github_actions_doesnt_seem_to_be_using_docker/lgfskeu/
+          # Need to use github.ref_name instead of env.TAG_NAME, otherwise non-tagged builds will have an invalid format :/
           set: |
             *.cache-from=type=gha,version=2,url_v2=${{ env.ACTIONS_RESULTS_URL }},token=${{ env.ACTIONS_RUNTIME_TOKEN }},ACTIONS_RUNTIME_TOKEN=${{ secrets.GITHUB_TOKEN }}
             *.cache-to=type=gha,mode=max,version=2,url_v2=${{ env.ACTIONS_RESULTS_URL }},token=${{ env.ACTIONS_RUNTIME_TOKEN }},ACTIONS_RUNTIME_TOKEN=${{ secrets.GITHUB_TOKEN }}
             
             prusaslicer-base.args.PRUSASLICER_TAG=version_${{ env.compose_prusaslicer_version }}
+            *.tags=julianneswinoga/prusaslicer-web:latest
             *.tags=julianneswinoga/prusaslicer-web:${{ env.compose_prusaslicer_version }}
+            *.tags=julianneswinoga/prusaslicer-web:${{ github.ref_name }}-${{ env.compose_prusaslicer_version }}
 
       - name: Update Docker Hub Description
         if: ${{ env.TAG_NAME != '' }}
@@ -64,3 +67,5 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PAT }}
           repository: julianneswinoga/prusaslicer-web
+          short-description: 'https://github.com/julianneswinoga/prusaslicer-web'
+          enable-url-completion: true
