@@ -5,11 +5,26 @@ jobs:
   build:
     runs-on: 'ubuntu-24.04'
     environment: default_env
-    env:
-      PRUSASLICER_VERSION: '2.9.4'
     steps:
+      - uses: actions/checkout@v5
       - name: Set IS_TAG
-        run: echo "IS_TAG=${{ startsWith(github.ref, 'refs/tags/') == 'true' }}" >> $GITHUB_ENV
+        run: echo "IS_TAG=${{ startsWith(github.ref, 'refs/tags/') == 'true' }}" | tee -a $GITHUB_ENV
+
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v1
+
+      - name: Read compose PRUSASLICER_TAG
+        run: |
+          cd docker/
+          compose_prusaslicer_tag=$(docker compose config --format=json | jq -r '.services."prusaslicer-base".build.args.PRUSASLICER_TAG')
+          compose_prusaslicer_version=$(echo "$compose_prusaslicer_tag" | sed 's/^version_//')
+          echo "compose_prusaslicer_version=$compose_prusaslicer_version" | tee -a $GITHUB_ENV
+
+      - name: Get latest upstream release tag
+        run: |
+          latest_upstream_tag=$(curl --show-error --silent --location https://api.github.com/repos/prusa3d/PrusaSlicer/releases/latest | jq -r '.tag_name')
+          latest_upstream_version=$(echo "$latest_upstream_tag" | sed 's/^version_//')
+          echo "latest_upstream_version=$latest_upstream_version" | tee -a $GITHUB_ENV
 
       - name: Log in to Docker Hub
         if: ${{ env.IS_TAG == 'true' }}
@@ -19,6 +34,8 @@ jobs:
           password: ${{ secrets.DOCKER_PAT }}
 
       # Just so we can cache stuff
+      - name: Expose GitHub Runtime  # https://github.com/docker/bake-action/issues/36 ?
+        uses: crazy-max/ghaction-github-runtime@v3
       - name: Install buildx
         uses: docker/setup-buildx-action@v3
         with:
@@ -36,5 +53,5 @@ jobs:
             *.cache-from=type=gha,version=2,url_v2=${{ env.ACTIONS_RESULTS_URL }},token=${{ env.ACTIONS_RUNTIME_TOKEN }},ACTIONS_RUNTIME_TOKEN=${{ secrets.GITHUB_TOKEN }}
             *.cache-to=type=gha,mode=max,version=2,url_v2=${{ env.ACTIONS_RESULTS_URL }},token=${{ env.ACTIONS_RUNTIME_TOKEN }},ACTIONS_RUNTIME_TOKEN=${{ secrets.GITHUB_TOKEN }}
             
-            prusaslicer-base.args.PRUSASLICER_TAG=version_${{ env.PRUSASLICER_VERSION }}
-            *.tags=julianneswinoga/prusaslicer-web:${{ env.PRUSASLICER_VERSION }}
+            prusaslicer-base.args.PRUSASLICER_TAG=version_${{ env.compose_prusaslicer_version }}
+            *.tags=julianneswinoga/prusaslicer-web:${{ env.compose_prusaslicer_version }}

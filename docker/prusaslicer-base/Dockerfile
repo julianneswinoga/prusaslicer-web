@@ -1,7 +1,9 @@
-FROM ubuntu:24.04 AS build_step
+ARG UBUNTU_VERSION=24.04
 
-ARG Z3_VERSION=4.8.12
-ARG PRUSASLICER_VERSION=version_2.9.4
+FROM ubuntu:$UBUNTU_VERSION AS build_step
+
+ARG Z3_TAG=z3-4.8.12
+ARG PRUSASLICER_TAG=version_2.9.4
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN bash <<'EOF'
@@ -54,7 +56,7 @@ WORKDIR /z3
 RUN <<'EOF'
 set -eu
 
-tarball_url=$(curl --show-error --silent --location https://api.github.com/repos/Z3Prover/z3/releases/tags/z3-${Z3_VERSION} | jq -r '.tarball_url')
+tarball_url=$(curl --show-error --silent --location https://api.github.com/repos/Z3Prover/z3/releases/tags/${Z3_TAG} | jq -r '.tarball_url')
 echo "Downloading from $tarball_url"
 curl --show-error --silent --location "$tarball_url" | tar xvzf - -C . --strip-components=1
 EOF
@@ -72,7 +74,7 @@ WORKDIR /slic3r
 RUN <<'EOF'
 set -eu
 
-tarball_url=$(curl --show-error --silent --location https://api.github.com/repos/prusa3d/PrusaSlicer/releases/tags/${PRUSASLICER_VERSION} | jq -r '.tarball_url')
+tarball_url=$(curl --show-error --silent --location https://api.github.com/repos/prusa3d/PrusaSlicer/releases/tags/${PRUSASLICER_TAG} | jq -r '.tarball_url')
 echo "Downloading from $tarball_url"
 curl --show-error --silent --location "$tarball_url" | tar xvzf - -C . --strip-components=1
 EOF
@@ -94,7 +96,7 @@ cmake --install build
 EOF
 
 # Final image
-FROM ubuntu:24.04
+FROM ubuntu:$UBUNTU_VERSION
 COPY --from=build_step /usr/local /usr/local
 
 ENV DEBIAN_FRONTEND=noninteractive

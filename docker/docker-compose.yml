@@ -1,10 +1,13 @@
 services:
   prusaslicer-base:
-    build: prusaslicer-base/
+    build:
+      context: prusaslicer-base/
+      args:
+        PRUSASLICER_TAG: 'version_2.9.4'
   prusaslicer-web:
     build:
        context: prusaslicer-web/
        additional_contexts:
          prusaslicer_base: "service:prusaslicer-base"
     ports:
-      - 8077:8080
+      - "8077:8080"
