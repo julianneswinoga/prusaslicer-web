@@ -38,6 +38,9 @@ RUN bash <<'EOF'
 set -eu
 
 adduser --disabled-password --quiet --comment '' slic3r
+groupadd render  # For intel GPUs
+usermod -aG video,render slic3r
+
 mkdir /prints/
 mkdir -p /configs/.local/
 mkdir -p /configs/.config/
