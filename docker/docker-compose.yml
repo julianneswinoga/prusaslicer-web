@@ -8,6 +8,16 @@ services:
     build:
        context: prusaslicer-web/
        additional_contexts:
-         prusaslicer_base: "service:prusaslicer-base"
+         prusaslicer_base: 'service:prusaslicer-base'
     ports:
-      - "8077:8080"
+      - '8077:8080'
+  prusaslicer-web-amd:
+    image: docker-prusaslicer-web
+    environment:
+      - ENABLEHWGPU=true
+      - VGL_DISPLAY=/dev/dri/card1
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/kfd:/dev/kfd
+    ports:
+      - '8077:8080'

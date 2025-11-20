@@ -1,5 +1,6 @@
 FROM prusaslicer_base
 
+ARG VIRTUALGL_VERSION=3.1.4
 ARG TURBOVNC_VERSION=3.2.1
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -23,6 +24,9 @@ EOF
 # Install VirtualGL and TurboVNC
 RUN bash <<'EOF'
 set -eu
+
+wget -qO /tmp/virtualgl_${VIRTUALGL_VERSION}_amd64.deb https://github.com/VirtualGL/virtualgl/releases/download/${VIRTUALGL_VERSION}/virtualgl_${VIRTUALGL_VERSION}_amd64.deb
+dpkg -i /tmp/virtualgl_${VIRTUALGL_VERSION}_amd64.deb
 
 wget -qO /tmp/turbovnc_${TURBOVNC_VERSION}_amd64.deb https://github.com/TurboVNC/turbovnc/releases/download/${TURBOVNC_VERSION}/turbovnc_${TURBOVNC_VERSION}_amd64.deb
 dpkg -i /tmp/turbovnc_${TURBOVNC_VERSION}_amd64.deb
