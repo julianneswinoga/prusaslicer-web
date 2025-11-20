@@ -3,7 +3,7 @@ services:
     build:
       context: prusaslicer-base/
       args:
-        PRUSASLICER_TAG: 'version_2.9.4'
+        PRUSASLICER_TAG: 'version_2.9.3'
   prusaslicer-web:
     build:
        context: prusaslicer-web/
