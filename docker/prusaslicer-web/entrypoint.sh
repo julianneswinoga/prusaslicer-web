@@ -33,6 +33,6 @@ else
   export VGLRUN=
 fi
 
-export SUPD_LOGLEVEL="${SUPD_LOGLEVEL:-TRACE}"
+export SUPD_LOGLEVEL="${SUPD_LOGLEVEL:-debug}"
 echo 'Finished entrypoint script, starting supervisord'
 exec supervisord -e "$SUPD_LOGLEVEL"

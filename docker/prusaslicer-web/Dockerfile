@@ -42,7 +42,6 @@ EOF
 
 ENV PATH=${PATH}:/opt/VirtualGL/bin:/opt/TurboVNC/bin
 
-ADD entrypoint.sh /entrypoint.sh
 ADD supervisord.conf /etc/
 
 # Create log directory for supervisord
@@ -103,4 +102,7 @@ USER slic3r
 VOLUME /configs/
 VOLUME /prints/
 
+ADD healthcheck.sh /healthcheck.sh
+HEALTHCHECK --start-period=10s CMD /healthcheck.sh
+ADD entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
