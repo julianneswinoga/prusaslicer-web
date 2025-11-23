@@ -1,6 +1,8 @@
 name: build-and-release
 on:
   push:
+    tags:
+      - '*'
     branches-ignore:
       - 'autoupdate/*'
   pull_request:
