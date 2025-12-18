@@ -14,44 +14,44 @@ TODO:
 ### No GPU passthrough
 ```yaml
 services:
-    prusaslicer:
-      image: julianneswinoga/prusaslicer-web:latest
-      volumes:
-        - <host config dir>:/configs
-        - <host print dir>:/prints
+  prusaslicer:
+    image: julianneswinoga/prusaslicer-web:latest
+    volumes:
+      - <host config dir>:/configs
+      - <host print dir>:/prints
 ```
 
 ### AMD GPU passthrough
 ```yaml
 services:
-    prusaslicer:
-      image: julianneswinoga/prusaslicer-web:latest
-      environment:
-        - ENABLEHWGPU=true
-        - VGL_DISPLAY=/dev/dri/card1  # You might need to play around with card0, card1, etc
-      devices:
-        - /dev/dri:/dev/dri
-        - /dev/kfd:/dev/kfd
-      volumes:
-        - <host config dir>:/configs
-        - <host print dir>:/prints
+  prusaslicer:
+    image: julianneswinoga/prusaslicer-web:latest
+    environment:
+      - ENABLEHWGPU=true
+      - VGL_DISPLAY=/dev/dri/card1  # You might need to play around with card0, card1, etc
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/kfd:/dev/kfd
+    volumes:
+      - <host config dir>:/configs
+      - <host print dir>:/prints
 ```
 
 ### Intel GPU passthrough
 ```yaml
 services:
-    prusaslicer:
-      image: julianneswinoga/prusaslicer-web:latest
-      environment:
-        - ENABLEHWGPU=true
-        - VGL_DISPLAY=/dev/dri/card1  # You might need to play around with card0, card1, etc
-      devices:
-        - /dev/dri:/dev/dri
-      volumes:
-        - <host config dir>:/configs
-        - <host print dir>:/prints
-      group_add:
-        - 993  # This is for the host `render` group, see permissions on /dev/dri/*
+  prusaslicer:
+    image: julianneswinoga/prusaslicer-web:latest
+    environment:
+      - ENABLEHWGPU=true
+      - VGL_DISPLAY=/dev/dri/card1  # You might need to play around with card0, card1, etc
+    devices:
+      - /dev/dri:/dev/dri
+    volumes:
+      - <host config dir>:/configs
+      - <host print dir>:/prints
+    group_add:
+      - 993  # This is for the host `render` group, see permissions on /dev/dri/*
 ```
 
 ### NVidia GPU passthrough

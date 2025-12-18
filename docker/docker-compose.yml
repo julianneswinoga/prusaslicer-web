@@ -6,16 +6,18 @@ services:
         PRUSASLICER_TAG: 'version_2.9.4'
   prusaslicer-web:
     build:
-       context: prusaslicer-web/
-       additional_contexts:
-         prusaslicer_base: 'service:prusaslicer-base'
+      context: prusaslicer-web/
+      additional_contexts:
+        prusaslicer_base: 'service:prusaslicer-base'
+    pull_policy: never
     ports:
       - '8077:8080'
   prusaslicer-web-amd:
     image: docker-prusaslicer-web
+    pull_policy: never
     environment:
-      - ENABLEHWGPU=true
-      - VGL_DISPLAY=/dev/dri/card1
+      ENABLEHWGPU: 'true'
+      VGL_DISPLAY: /dev/dri/card1
     devices:
       - /dev/dri:/dev/dri
       - /dev/kfd:/dev/kfd
