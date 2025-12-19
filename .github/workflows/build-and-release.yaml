@@ -75,3 +75,13 @@ jobs:
           repository: julianneswinoga/prusaslicer-web
           short-description: 'https://github.com/julianneswinoga/prusaslicer-web'
           enable-url-completion: true
+
+      - name: Publish GitHub release
+        if: ${{ env.git_tag_name != '' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          generate_release_notes: true
+          append_body: true
+          body: |
+            https://hub.docker.com/layers/julianneswinoga/prusaslicer-web/${{ env.docker_hub_tag_prefix }}-${{ env.hcl_prusaslicer_version }}/

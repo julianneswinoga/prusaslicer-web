@@ -163,6 +163,12 @@ docker buildx bake
 docker compose up prusaslicer-web # or prusaslicer-web-{amd,nvidia} - see docker-compose.yml
 ```
 
+### Release
+```shell
+git tag x.y.z
+git push origin x.y.z
+```
+
 
 
 ----
