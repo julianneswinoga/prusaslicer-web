@@ -17,6 +17,9 @@ services:
       - <host print dir>:/prints
 ```
 
+<img src="./images/sysinfo_menu.png" height="300px" />
+<img src="./images/sysinfo_cpu.png" height="300px" />
+
 ### GPU passthrough with multiple GPUs (AMD/Intel acceleration only)
 
 If you have multiple GPUs on a system (i.e. integrated Intel graphics and a dedicated GPU) the graphics acceleration in the container could get confused if everything under `/dev/dri/` is passed through. Here's a short snippet of figuring out exactly what devices should be passed through to the container. Here I want to pass through the integrated Intel graphics, but I also have an NVidia GPU in the system.
@@ -67,6 +70,9 @@ services:
       - <host print dir>:/prints
 ```
 
+<img src="./images/sysinfo_menu.png" height="300px" />
+<img src="./images/sysinfo_amd.png" height="300px" />
+
 ### Intel GPU acceleration
 
 (i.e. integrated Intel graphics. Not sure if this works with Intel ARC GPUs, lmk if it does or doesn't!)
@@ -94,6 +100,9 @@ services:
       - 993  # Host `render` group
 ```
 
+<img src="./images/sysinfo_menu.png" height="300px" />
+<img src="./images/sysinfo_intel.png" height="300px" />
+
 ### NVidia GPU acceleration
 - Install NVidia drivers on host
   - Ubuntu: https://documentation.ubuntu.com/server/how-to/graphics/install-nvidia-drivers/index.html
@@ -116,6 +125,9 @@ services:
               count: all
               capabilities: [gpu]
 ```
+
+<img src="./images/sysinfo_menu.png" height="300px" />
+<img src="./images/sysinfo_nvidia.png" height="300px" />
 
 ## Container options
 The default NoVNC port is `8080`, to change it just map to a new port. For example, to access NoVNC on `8077` instead:
@@ -142,10 +154,6 @@ services:
 | `NOVNC_PORT`    | `8080`        | Change the port that NoVNC will listen on. Note that you can also [change the port mapping in the container service definition](#container-options) |
 | `SUPD_LOGLEVEL` | `TRACE`       | `supervisord` log level (i.e. the container log output).                                                                                            |
 
-----
-
-Based off of the work from https://github.com/helfrichmichael/prusaslicer-novnc and https://github.com/helfrichmichael/prusaslicer-novnc/pull/23
-
 ## Development
 
 ### Build the container
@@ -154,3 +162,9 @@ cd docker/
 docker buildx bake
 docker compose up prusaslicer-web # or prusaslicer-web-{amd,nvidia} - see docker-compose.yml
 ```
+
+
+
+----
+
+Based off of the work from https://github.com/helfrichmichael/prusaslicer-novnc and https://github.com/helfrichmichael/prusaslicer-novnc/pull/23
