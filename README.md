@@ -17,8 +17,9 @@ services:
       - <host print dir>:/prints
 ```
 
-<img src="./images/sysinfo_menu.png" height="300px" />
-<img src="./images/sysinfo_cpu.png" height="300px" />
+|                                |                               |
+|:------------------------------:|:-----------------------------:|
+| ![](./images/sysinfo_menu.png) | ![](./images/sysinfo_cpu.png) |
 
 ### GPU passthrough with multiple GPUs (AMD/Intel acceleration only)
 
@@ -70,8 +71,9 @@ services:
       - <host print dir>:/prints
 ```
 
-<img src="./images/sysinfo_menu.png" height="300px" />
-<img src="./images/sysinfo_amd.png" height="300px" />
+|                                |                               |
+|:------------------------------:|:-----------------------------:|
+| ![](./images/sysinfo_menu.png) | ![](./images/sysinfo_amd.png) |
 
 ### Intel GPU acceleration
 
@@ -100,8 +102,9 @@ services:
       - 993  # Host `render` group
 ```
 
-<img src="./images/sysinfo_menu.png" height="300px" />
-<img src="./images/sysinfo_intel.png" height="300px" />
+|                                |                                 |
+|:------------------------------:|:-------------------------------:|
+| ![](./images/sysinfo_menu.png) | ![](./images/sysinfo_intel.png) |
 
 ### NVidia GPU acceleration
 - Install NVidia drivers on host
@@ -126,8 +129,9 @@ services:
               capabilities: [gpu]
 ```
 
-<img src="./images/sysinfo_menu.png" height="300px" />
-<img src="./images/sysinfo_nvidia.png" height="300px" />
+|                                |                                  |
+|:------------------------------:|:--------------------------------:|
+| ![](./images/sysinfo_menu.png) | ![](./images/sysinfo_nvidia.png) |
 
 ## Container options
 The default NoVNC port is `8080`, to change it just map to a new port. For example, to access NoVNC on `8077` instead:
