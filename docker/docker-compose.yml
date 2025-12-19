@@ -17,7 +17,6 @@ services:
     pull_policy: never
     environment:
       ENABLEHWGPU: 'true'
-      VGL_DISPLAY: /dev/dri/card1
     devices:
       - /dev/dri:/dev/dri
       - /dev/kfd:/dev/kfd
