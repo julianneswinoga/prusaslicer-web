@@ -1,6 +1,6 @@
-ARG UBUNTU_VERSION=24.04
+ARG CONTAINER_BASE=ubuntu:24.04
 
-FROM ubuntu:$UBUNTU_VERSION AS build_step
+FROM $CONTAINER_BASE AS build_step
 
 ARG Z3_TAG=z3-4.8.12
 ARG PRUSASLICER_TAG=version_2.9.4
@@ -82,7 +82,7 @@ cmake --install build
 EOF
 
 # Final image
-FROM ubuntu:$UBUNTU_VERSION
+FROM $CONTAINER_BASE
 COPY --from=build_step /opt /opt
 ENV PATH=${PATH}:/opt/PrusaSlicer/bin
 

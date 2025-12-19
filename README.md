@@ -3,13 +3,6 @@
 
 ![](./images/screenshot.png)
 
-TODO:
-- [ ] Automatic image rebuilds on new upstream Prusa Slicer release
-- [x] Intel/AMD GPU passthrough support
-- [ ] NVidia GPU passthrough support
-- [x] VNC password support
-- [ ] Desktop theming
-
 ## Quick start `docker-compose` examples
 ### No GPU acceleration
 
@@ -101,8 +94,28 @@ services:
       - 993  # Host `render` group
 ```
 
-### NVidia GPU passthrough
-TODO!
+### NVidia GPU acceleration
+- Install NVidia drivers on host
+  - Ubuntu: https://documentation.ubuntu.com/server/how-to/graphics/install-nvidia-drivers/index.html
+- Install `nvidia-container-toolkit`
+  - Ubuntu: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
+- Reboot after installing
+
+```yaml
+services:
+  prusaslicer:
+    image: julianneswinoga/prusaslicer-web:latest
+    environment:
+      ENABLEHWGPU: 'true'
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+```
 
 ## Container options
 The default NoVNC port is `8080`, to change it just map to a new port. For example, to access NoVNC on `8077` instead:
@@ -132,3 +145,12 @@ services:
 ----
 
 Based off of the work from https://github.com/helfrichmichael/prusaslicer-novnc and https://github.com/helfrichmichael/prusaslicer-novnc/pull/23
+
+## Development
+
+### Build the container
+```shell
+cd docker/
+docker buildx bake
+docker compose up prusaslicer-web # or prusaslicer-web-{amd,nvidia} - see docker-compose.yml
+```

@@ -1,24 +1,32 @@
 services:
-  prusaslicer-base:
-    build:
-      context: prusaslicer-base/
-      args:
-        PRUSASLICER_TAG: 'version_2.9.4'
   prusaslicer-web:
-    build:
-      context: prusaslicer-web/
-      additional_contexts:
-        prusaslicer_base: 'service:prusaslicer-base'
+    image: prusaslicer-web:dev
     pull_policy: never
     ports:
       - '8077:8080'
   prusaslicer-web-amd:
-    image: docker-prusaslicer-web
+    image: prusaslicer-web:dev
     pull_policy: never
     environment:
       ENABLEHWGPU: 'true'
     devices:
-      - /dev/dri:/dev/dri
+      - /dev/dri/card1:/dev/dri/card1
+      - /dev/dri/renderD128:/dev/dri/renderD128
       - /dev/kfd:/dev/kfd
+    ports:
+      - '8077:8080'
+  prusaslicer-web-nvidia:
+    image: prusaslicer-web:dev
+    pull_policy: never
+    environment:
+      ENABLEHWGPU: 'true'
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     ports:
       - '8077:8080'

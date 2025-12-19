@@ -10,7 +10,7 @@ on:
       - '*'
 
 jobs:
-  build:
+  build-and-release:
     runs-on: 'ubuntu-latest'
     environment: default_env
     steps:
@@ -28,15 +28,12 @@ jobs:
             echo "docker_hub_tag_prefix=${full_sha::8}" | tee -a $GITHUB_ENV
           fi
 
-      - name: Set up Docker Compose
-        uses: docker/setup-compose-action@v1
-
-      - name: Read compose PRUSASLICER_TAG
+      - name: Read hcl PRUSASLICER_TAG
         run: |
           cd docker/
-          compose_prusaslicer_tag=$(docker compose config --format=json | jq -r '.services."prusaslicer-base".build.args.PRUSASLICER_TAG')
-          compose_prusaslicer_version=$(echo "$compose_prusaslicer_tag" | sed 's/^version_//')
-          echo "compose_prusaslicer_version=$compose_prusaslicer_version" | tee -a $GITHUB_ENV
+          hcl_prusaslicer_tag=$(docker buildx bake --print | jq -r '.target."prusaslicer-base".args.PRUSASLICER_TAG')
+          hcl_prusaslicer_version=$(echo "$hcl_prusaslicer_tag" | sed 's/^version_//')
+          echo "hcl_prusaslicer_version=$hcl_prusaslicer_version" | tee -a $GITHUB_ENV
 
       - name: Log in to Docker Hub
         if: ${{ env.git_tag_name != '' }}
@@ -53,7 +50,6 @@ jobs:
         with:
           install: true
 
-      # Use bake since it can read a docker-compose.yml
       - name: Build and maybe push
         uses: docker/bake-action@v6
         with:
@@ -65,10 +61,10 @@ jobs:
             *.cache-from=type=gha,version=2,url_v2=${{ env.ACTIONS_RESULTS_URL }},token=${{ env.ACTIONS_RUNTIME_TOKEN }},ACTIONS_RUNTIME_TOKEN=${{ secrets.GITHUB_TOKEN }}
             *.cache-to=type=gha,mode=max,version=2,url_v2=${{ env.ACTIONS_RESULTS_URL }},token=${{ env.ACTIONS_RUNTIME_TOKEN }},ACTIONS_RUNTIME_TOKEN=${{ secrets.GITHUB_TOKEN }}
             
-            prusaslicer-base.args.PRUSASLICER_TAG=version_${{ env.compose_prusaslicer_version }}
+            prusaslicer-base.args.PRUSASLICER_TAG=version_${{ env.hcl_prusaslicer_version }}
             *.tags=julianneswinoga/prusaslicer-web:latest
-            *.tags=julianneswinoga/prusaslicer-web:${{ env.compose_prusaslicer_version }}
-            *.tags=julianneswinoga/prusaslicer-web:${{ env.docker_hub_tag_prefix }}-${{ env.compose_prusaslicer_version }}
+            *.tags=julianneswinoga/prusaslicer-web:${{ env.hcl_prusaslicer_version }}
+            *.tags=julianneswinoga/prusaslicer-web:${{ env.docker_hub_tag_prefix }}-${{ env.hcl_prusaslicer_version }}
 
       - name: Update Docker Hub Description
         if: ${{ env.git_tag_name != '' }}
