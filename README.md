@@ -15,6 +15,8 @@ services:
     volumes:
       - <host config dir>:/configs
       - <host print dir>:/prints
+    ports:
+      - '8077:8080'
 ```
 
 |                                |                               |
@@ -69,6 +71,8 @@ services:
     volumes:
       - <host config dir>:/configs
       - <host print dir>:/prints
+    ports:
+      - '8077:8080'
 ```
 
 |                                |                               |
@@ -100,6 +104,8 @@ services:
       - <host print dir>:/prints
     group_add:
       - 993  # Host `render` group
+    ports:
+      - '8077:8080'
 ```
 
 |                                |                                 |
@@ -127,21 +133,13 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
+    ports:
+      - '8077:8080'
 ```
 
 |                                |                                  |
 |:------------------------------:|:--------------------------------:|
 | ![](./images/sysinfo_menu.png) | ![](./images/sysinfo_nvidia.png) |
-
-## Container options
-The default NoVNC port is `8080`, to change it just map to a new port. For example, to access NoVNC on `8077` instead:
-```yaml
-services:
-    prusaslicer:
-      # other config
-      ports:
-        - '8077:8080'
-```
 
 ### Common environment variables
 
