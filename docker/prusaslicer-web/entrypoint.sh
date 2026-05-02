@@ -9,6 +9,19 @@ export VNC_PORT=${VNC_PORT:-5900}
 # turbovnc options
 export DISPLAY=${DISPLAY:-:0}
 export VNC_RESOLUTION=${VNC_RESOLUTION:-1280x800}
+readonly DISPLAY_WITHOUT_HOST="${DISPLAY#*:}"
+readonly DISPLAY_NUMBER="${DISPLAY_WITHOUT_HOST%%.*}"
+if [[ ! "$DISPLAY_NUMBER" =~ ^[0-9]+$ ]]; then
+  echo "DISPLAY must be in the form :<number> or :<number>.<screen>, got '$DISPLAY'" >&2
+  exit 1
+fi
+export DISPLAY_NUMBER
+
+# Docker restart preserves the container writable layer, including stale X locks.
+# TurboVNC refuses to start if these are left behind by an unclean shutdown.
+rm -f "/tmp/.X${DISPLAY_NUMBER}-lock" "/tmp/.X11-unix/X${DISPLAY_NUMBER}"
+rm -f "$HOME"/.vnc/*":${DISPLAY_NUMBER}.pid"
+
 if [ -n "${VNC_PASSWORD:-}" ]; then
   mkdir -p "$HOME/.vnc"
   echo "$VNC_PASSWORD" | vncpasswd -f > "$HOME/.vnc/passwd"
@@ -17,9 +30,6 @@ if [ -n "${VNC_PASSWORD:-}" ]; then
 else
   export VNC_SEC='-securitytypes TLSNone,X509None,None'
 fi
-
-
-DISPLAY_NUMBER=$(echo "$DISPLAY" | cut -d: -f2)
 
 # novnc options
 export NOVNC_PORT="${NOVNC_PORT:-8080}"

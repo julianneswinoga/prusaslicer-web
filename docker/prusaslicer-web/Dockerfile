@@ -8,7 +8,7 @@ RUN bash <<'EOF'
 set -eu
 
 
-base_deps=(locales xterm novnc lxqt-core openbox gosu supervisor)
+base_deps=(locales xterm novnc lxqt-core openbox gosu supervisor x11-utils)
 turbovnc_deps=(dbus-x11 xauth x11-xkb-utils libxfont2)
 
 apt-get update
@@ -103,6 +103,8 @@ VOLUME /configs/
 VOLUME /prints/
 
 ADD healthcheck.sh /healthcheck.sh
+ADD start-prusaslicer.sh /start-prusaslicer.sh
+ADD start-turbovnc.sh /start-turbovnc.sh
 HEALTHCHECK --start-period=10s CMD /healthcheck.sh
 ADD entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
