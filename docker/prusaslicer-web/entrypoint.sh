@@ -10,9 +10,9 @@ export VNC_PORT=${VNC_PORT:-5900}
 export DISPLAY=${DISPLAY:-:0}
 export VNC_RESOLUTION=${VNC_RESOLUTION:-1280x800}
 if [ -n "${VNC_PASSWORD:-}" ]; then
-  mkdir -p "/$HOME/.vnc"
-  echo "$VNC_PASSWORD" | vncpasswd -f > "/$HOME/.vnc/passwd"
-  chmod 0600 "/$HOME/.vnc/passwd"
+  mkdir -p "$HOME/.vnc"
+  echo "$VNC_PASSWORD" | vncpasswd -f > "$HOME/.vnc/passwd"
+  chmod 0600 "$HOME/.vnc/passwd"
   export VNC_SEC=
 else
   export VNC_SEC='-securitytypes TLSNone,X509None,None'
