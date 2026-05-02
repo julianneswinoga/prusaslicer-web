@@ -154,7 +154,7 @@ services:
 |-----------------|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
 | `VGL_DISPLAY`   | `egl`         | Manually set the VirtualGL display device. See https://virtualgl.org/vgldoc/2_0/#GLP_Usage for more details.                                        |
 | `NOVNC_PORT`    | `8080`        | Change the port that NoVNC will listen on. Note that you can also [change the port mapping in the container service definition](#container-options) |
-| `SUPD_LOGLEVEL` | `TRACE`       | `supervisord` log level (i.e. the container log output).                                                                                            |
+| `SUPD_LOGLEVEL` | `debug`       | `supervisord` log level (i.e. the container log output).                                                                                            |
 
 ## Development
 
