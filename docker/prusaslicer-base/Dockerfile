@@ -90,9 +90,34 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN bash <<'EOF'
 set -eu
 
+runtime_deps=(
+    # ./CMakeLists.txt
+    # Provides Boost shared libraries used throughout PrusaSlicer.
+    libboost-all-dev
+    # Runtime library for Qhull geometry operations.
+    libqhullcpp8.0
+    # Provides OpenVDB runtime support for volumetric geometry.
+    libopenvdb-tools
+    # Runtime library for NLopt optimization.
+    libnlopt0
+    # Runtime library for GLEW OpenGL extension loading.
+    libglew2.2
+    # Runtime library for libcurl-backed network features.
+    libcurl4t64
+    # Runtime library for wxWidgets OpenGL UI components.
+    libwxgtk-gl3.2-1t64
+    # Runtime library for wxWidgets WebView UI components.
+    libwxgtk-webview3.2-1t64
+    # ./src/libseqarrange/CMakeLists.txt
+    # Runtime library for the Z3 solver used by arrangement code.
+    libz3-4
+    # ./src/occt_wrapper/CMakeLists.txt
+    # Runtime library for OCCTWrapper.so STEP import (TKXDESTEP).
+    libocct-data-exchange-7.6t64
+)
+
 apt-get update
-apt-get install -y --no-install-recommends \
-    libboost-all-dev libqhullcpp8.0 libopenvdb-tools libnlopt0 libglew2.2 libcurl4t64 libwxgtk-gl3.2-1t64 libwxgtk-webview3.2-1t64 libz3-4
+apt-get install -y --no-install-recommends "${runtime_deps[@]}"
 
 apt-get autoclean -y
 apt-get autoremove -y
