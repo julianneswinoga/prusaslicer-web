@@ -26,7 +26,7 @@ build_deps=(
     # libbgcode sub-deps
     libheatshrink-dev
     # ./src/occt_wrapper/CMakeLists.txt
-    libocct-ocaf-dev libocct-data-exchange-dev
+    libocct-ocaf-dev libocct-data-exchange-dev libocct-visualization-dev
     # ./src/slic3r/CMakeLists.txt
     libssl-dev libwebkit2gtk-4.1-dev
     # ./src/libseqarrange/CMakeLists.txt
