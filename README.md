@@ -81,8 +81,6 @@ services:
 
 ### Intel GPU acceleration
 
-(i.e. integrated Intel graphics. Not sure if this works with Intel ARC GPUs, lmk if it does or doesn't!)
-
 We need to give the container access to the `render` group (the group that owns `/dev/dri/renderD128`), so get the group ID and add it to `group_add`:
 ```console
 $ getent group render
