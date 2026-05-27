@@ -42,8 +42,8 @@ jobs:
       - name: Update source code
         if: ${{ env.upstream_has_newer_release == 'true' }}
         run: |
-          perl -i -pe 's|\Q${{ env.latest_upstream_version }}\E|${{ env.hcl_prusaslicer_version }}|g' docker/docker-bake.hcl
-          perl -i -pe 's|\Q${{ env.latest_upstream_version }}\E|${{ env.hcl_prusaslicer_version }}|g' docker/prusaslicer-base/Dockerfile
+          perl -i -pe 's|\Q${{ env.hcl_prusaslicer_version }}\E|${{ env.latest_upstream_version }}|g' docker/docker-bake.hcl
+          perl -i -pe 's|\Q${{ env.hcl_prusaslicer_version }}\E|${{ env.latest_upstream_version }}|g' docker/prusaslicer-base/Dockerfile
 
       - name: Create Pull Request
         if: ${{ env.upstream_has_newer_release == 'true' }}
