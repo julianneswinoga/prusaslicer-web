@@ -3,7 +3,7 @@ ARG CONTAINER_BASE=ubuntu:24.04
 FROM $CONTAINER_BASE AS build_step
 
 ARG Z3_TAG=z3-4.8.12
-ARG PRUSASLICER_TAG=version_2.9.4
+ARG PRUSASLICER_TAG=version_2.9.5
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN bash <<'EOF'
@@ -29,6 +29,8 @@ build_deps=(
     libocct-ocaf-dev libocct-data-exchange-dev libocct-visualization-dev
     # ./src/slic3r/CMakeLists.txt
     libssl-dev libwebkit2gtk-4.1-dev
+    # ./bundled_deps/hidapi/CMakeLists.txt
+    libhidapi-dev
     # ./src/libseqarrange/CMakeLists.txt
     # libz3-dev is still sorta broken on 24.04, see below
     libz3-dev
@@ -114,6 +116,9 @@ runtime_deps=(
     # ./src/occt_wrapper/CMakeLists.txt
     # Runtime library for OCCTWrapper.so STEP import (TKXDESTEP).
     libocct-data-exchange-7.6t64
+    # Runtime libraries for HIDAPI backends.
+    libhidapi-hidraw0
+    libhidapi-libusb0
 )
 
 apt-get update
