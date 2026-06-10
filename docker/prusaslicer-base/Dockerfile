@@ -3,7 +3,7 @@ ARG CONTAINER_BASE=ubuntu:24.04
 FROM $CONTAINER_BASE AS build_step
 
 ARG Z3_TAG=z3-4.8.12
-ARG PRUSASLICER_TAG=version_2.9.5
+ARG PRUSASLICER_TAG=version_null
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN bash <<'EOF'
