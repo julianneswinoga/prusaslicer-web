@@ -7,7 +7,7 @@ group "default" {
 target "prusaslicer-base" {
   context = "./prusaslicer-base/"
   args = {
-    PRUSASLICER_TAG = "version_2.9.6"
+    PRUSASLICER_TAG = "version_3.0.0-alpha12"
   }
 }
 

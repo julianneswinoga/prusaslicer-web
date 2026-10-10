@@ -1,8 +1,7 @@
 #!/bin/bash
 set -eu
 
-echo "Starting entrypoint script, env=
-$(env)"
+echo "Starting entrypoint script"
 
 export VNC_PORT=${VNC_PORT:-5900}
 

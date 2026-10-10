@@ -3,7 +3,7 @@ ARG CONTAINER_BASE=ubuntu:24.04
 FROM $CONTAINER_BASE AS build_step
 
 ARG Z3_TAG=z3-4.8.12
-ARG PRUSASLICER_TAG=version_2.9.6
+ARG PRUSASLICER_TAG=version_3.0.0-alpha12
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN bash <<'EOF'
@@ -71,16 +71,22 @@ EOF
 ADD permissive-opencascade-version.patch .
 RUN git apply permissive-opencascade-version.patch
 
-# Build source
+# Build the pinned dependencies, then PrusaSlicer. PrusaSlicer 3.x no longer
+# provides the shareddeps preset used by the 2.x build.
 RUN <<'EOF'
 set -eu
 
-cmake -S . -B build --preset shareddeps \
+cmake -S deps -B deps/build
+LC_ALL=C.UTF-8 cmake --build deps/build -j$(nproc)
+cmake -S . -B build \
+    -DCMAKE_PREFIX_PATH="$PWD/deps/build/destdir/usr/local" \
+    -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/opt/PrusaSlicer \
     -DSLIC3R_BUILD_TESTS=no \
     -DOPENVDB_FIND_MODULE_PATH=/usr/lib/x86_64-linux-gnu/cmake/OpenVDB/
 cmake --build build -j$(nproc)
 cmake --install build
+test -x /opt/PrusaSlicer/bin/slic3r-app-launcher
 EOF
 
 # Final image

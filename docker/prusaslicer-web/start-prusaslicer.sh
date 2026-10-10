@@ -8,4 +8,4 @@ done
 echo "X display ${DISPLAY} is ready"
 
 # Unquoted VGLRUN so an empty value disappears and we don't run a wrapper.
-exec $VGLRUN prusa-slicer --datadir /configs/.config/PrusaSlicer/
+exec $VGLRUN slic3r-app-launcher --datadir /configs/.config/PrusaSlicer3-dev/
